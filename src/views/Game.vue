@@ -9,32 +9,33 @@ import groundImg from "../assets/ground.png";
 import playerImg from "../assets/player.png";
 import coinImg from "../assets/coin.png";
 import enemyImg from "../assets/enemy.png";
+import nivelImg from "../assets/0x72_16x16DungeonTileset.v1.png";
+import nivelCsv from "../assets/nivel_gui.csv";
 
 //audio
 import dustAudio from "../assets/dust.wav";
-let score = 0
-let scoreText
+let score = 0;
+let scoreText;
 
 function takeCoin(player, coin) {
-    //TODO millorar amb una animació
-    coin.disableBody(true, true)
-    console.log('takeCoin');
+  //TODO millorar amb una animació
+  coin.disableBody(true, true);
+  console.log("takeCoin");
 
-    score += 10
+  score += 10;
 
-    scoreText.setText('Score: '+score)
+  scoreText.setText("Score: " + score);
 
-    //TODO executar so que pertoca 
+  //TODO executar so que pertoca
 }
 
 function die(player, enemie) {
-    //TODO millorar amb una animació
-    player.disableBody(true, true)
+  //TODO millorar amb una animació
+  player.disableBody(true, true);
 
-    enemie.disableBody(true, true)
+  enemie.disableBody(true, true);
 
-
-    //TODO executar so que pertoca 
+  //TODO executar so que pertoca
 }
 
 export default {
@@ -44,12 +45,12 @@ export default {
     //phaser 2.X => phaser-ce
     let config = {
       type: Phaser.AUTO,
-      width: 500,
-      height: 200,
+      width: 400, //500,
+      height: 400, //200,
       scene: {
         //no hi ha estats sino scenes
         preload: preload,
-        create: create,
+        create: createProva, //create,
         update: update
       },
       physics: {
@@ -66,6 +67,9 @@ export default {
     function preload() {
       console.log("preload");
 
+      this.load.image("tiles", nivelImg);
+      this.load.tilemapCSV("map", nivelCsv);
+
       this.load.image("wall", wallImg);
       this.load.image("ground", groundImg);
       this.load.spritesheet("player", playerImg, {
@@ -79,10 +83,18 @@ export default {
 
       this.load.image("enemy", enemyImg);
 
-
-
       //this.load.image("logo", "assets/logo.png");
-      
+    }
+
+    function createProva() {
+        this.cameras.main.backgroundColor.setTo(52, 152, 219);
+      const map = this.make.tilemap({
+        key: "map",
+        tileWidth: 16,
+        tileHeight: 16
+      });
+      const tileset = map.addTilesetImage("tiles");
+      const layer = map.createStaticLayer(0, tileset, 0, 0); // layer index, tileset, x, y
     }
 
     function create() {
@@ -119,28 +131,29 @@ export default {
         repeat: -1
       });
 
-      this.coins = this.physics.add.group()
+      this.coins = this.physics.add.group();
       this.coins.create(140, 200 / 2, "coin");
       this.coins.create(170, 200 / 2, "coin");
       this.coins.create(200, 200 / 2, "coin");
 
       this.physics.add.collider(this.coins, this.level);
-      this.physics.add.overlap(this.player, this.coins, takeCoin, null, this)
+      this.physics.add.overlap(this.player, this.coins, takeCoin, null, this);
 
-      //score 
-      scoreText = this.add.text(20, 20, 'score: '+ score, { fontSize: '15px', fill: '#000'})
+      //score
+      scoreText = this.add.text(20, 20, "score: " + score, {
+        fontSize: "15px",
+        fill: "#000"
+      });
 
-      this.enemies = this.physics.add.group()
-      this.enemies.create(500 / 2 + 120, 200 / 2 - 100, "enemy")
+      this.enemies = this.physics.add.group();
+      this.enemies.create(500 / 2 + 120, 200 / 2 - 100, "enemy");
       this.physics.add.collider(this.enemies, this.level);
 
-      this.physics.add.overlap(this.player, this.enemies, die, null, this)
-
-
+      this.physics.add.overlap(this.player, this.enemies, die, null, this);
     }
 
     function update() {
-      this.player.anims.play("idle", true);
+      /* this.player.anims.play("idle", true);
 
       if (this.cursors.left.isDown) {
         console.log("left");
@@ -157,7 +170,7 @@ export default {
       if (this.cursors.up.isDown && this.player.body.touching.down) {
         this.player.setVelocityY(-160);
         this.player.setFrame(3);
-      }
+      } */
     }
   }
 };
